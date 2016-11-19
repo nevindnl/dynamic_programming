@@ -1,8 +1,12 @@
+require_relative "matrix"
+
+# item is hash with weight, value
 def knapsack total_weight, items
-  matrix = Array.new(items.length + 1){Array.new(total_weight + 1){0}}
+  weights = (1..total_weight).to_a
+  matrix = DPMatrix.new(items, weights)
 
   items.each_with_index do |item, i|
-    (0...total_weight).each do |j|
+    weights.each_with_index do |_, j|
       weight = item[:weight]
       value = item[:value]
 
@@ -20,8 +24,6 @@ def knapsack total_weight, items
   matrix[-1][-1]
 end
 
-require_relative "matrix"
-
 def longest_common_substring s1, s2
   matrix = StringMatrix.new(s1, s2)
 
@@ -33,4 +35,23 @@ def longest_common_substring s1, s2
   end
 
   matrix[-1].max_by(&:length)
+end
+
+def closest_sequence seq1, seq2
+  matrix = DPMatrix.new(seq1, seq2)
+
+  (0...seq1.length).each do |i|
+    matrix[i + 1][i + 1] = (0..i)
+      .map{|j| (seq1[j] - seq2[j]).abs}
+      .reduce(:+)
+
+    (i + 1...seq2.length).each do |j|
+      matrix[i + 1][j + 1] = [
+        matrix[i + 1][j],
+        matrix[i][j] + (seq1[i] - seq2[j]).abs
+      ].min
+    end
+  end
+
+  matrix[-1][-1]
 end

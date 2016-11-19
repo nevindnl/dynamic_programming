@@ -13,12 +13,9 @@ class DPMatrix
   end
 
   def to_s
-    "      " + @arr2.join("   ") + "\n" +
-    @store.map.with_index do |row, i|
-      j = i == 0 ? " " : @arr1[i]
-      j + row.to_s
-    end.join("\n")
+    @store.map(&:to_s).join("\n")
   end
+
 end
 
 class StringMatrix < DPMatrix
